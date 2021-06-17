@@ -4,7 +4,7 @@ const int potPin2 = 32;
 
 //resistance of reference resistors
 const int R1 = 174;//174k ohms
-//const int R2 =;
+const int R2 = 0;
 
 // variable for storing the potentiometer value
 int potValue1 = 0;
@@ -12,6 +12,7 @@ int potValue2 = 0;
 
 // represent last value
 float preRs1 = 0;
+float preRs2 = 0;
 
 void setup(void) {
   Serial.begin(115200);
@@ -24,7 +25,7 @@ void setup(void) {
 void loop(void) {
   // Reading potentiometer value
   potValue1 = analogRead(potPin1);//12bit read
-  //potValue2 = analogRead(potPin2);
+  potValue2 = analogRead(potPin2);
 
   //this part is used to test portvalue. Range:0-4095
   //Serial.println(potValue1);
@@ -32,7 +33,7 @@ void loop(void) {
   //Serial.println(potValue2);
   
   float V1 = resolution(potValue1);//transfre to voltage
-  //float V2 = resolution(potValue2);
+  float V2 = resolution(potValue2);
 
   //this part is used to test voltage. Range:0-3.3
   //Serial.print(V1);
@@ -47,8 +48,15 @@ void loop(void) {
   } else {
     preRs1 = Rs1;  
   }
-  //float Rs2 = votageToR(V2, R2);
-
+  
+  float Rs2 = votageToR(V2, R2);
+  if(preRs2 == 0){
+    preRs2 = Rs2;
+  } else if(abs(Rs2 - preRs2)> 20) {
+    Rs1 = preRs2;
+  } else {
+    preRs2 = Rs2;  
+  }
   //this part is used to test resistance
   Serial.println(Rs1);
   Serial.print(",");
